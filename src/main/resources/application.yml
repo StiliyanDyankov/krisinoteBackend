@@ -1,0 +1,13 @@
+app:
+  jwt-secret-key:
+    SECRET_KEY: ${SECRET_KEY}
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    pool-size: 30
+    jdbc-url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+server:
+  error:
+    include-binding-errors: always
+    include-message: always
