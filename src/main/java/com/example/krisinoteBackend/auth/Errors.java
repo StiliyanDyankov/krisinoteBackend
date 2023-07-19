@@ -1,24 +1,23 @@
 package com.example.krisinoteBackend.auth;
 
-
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class Errors<T> {
 
     @Nullable
-    private String firstname;
+    private T errors;
+
     @Nullable
-    private String lastname;
-    @Nullable
-    private String email;
-    @Nullable
-    private String password;
+    private String message;
 }
+

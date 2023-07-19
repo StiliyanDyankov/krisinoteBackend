@@ -58,7 +58,7 @@ public class JwtService {
         // the methods setSubject, setIssuedAt etc. are really
         // just specialized versions of setClaims, wherein you set
         // commonly used/ standard claims - they're convenience methods
-
+//        userDetails.getPassword()
         // here we're yet again utilizing the builder pattern
         return Jwts
                 .builder()
@@ -91,7 +91,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())

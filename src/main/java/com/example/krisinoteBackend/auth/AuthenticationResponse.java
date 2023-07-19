@@ -1,9 +1,7 @@
 package com.example.krisinoteBackend.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.annotation.Nullable;
+import lombok.*;
 
 @Data
 @Builder
@@ -11,6 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
 
-    private String token;
+    @Nullable
+    private ResponseSuccessData data;
+
+    @Nullable
+    private ResponseErrorData error;
 
 }
+

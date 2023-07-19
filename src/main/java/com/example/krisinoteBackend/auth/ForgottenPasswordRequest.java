@@ -1,6 +1,5 @@
 package com.example.krisinoteBackend.auth;
 
-
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-
-    @Nullable
-    private String firstname;
-    @Nullable
-    private String lastname;
+public class ForgottenPasswordRequest {
     @Nullable
     private String email;
     @Nullable
-    private String password;
+    private String newPassword;
 }

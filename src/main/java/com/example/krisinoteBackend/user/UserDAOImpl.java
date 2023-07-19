@@ -24,8 +24,11 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public int update(User user, int id) {
+        String sql = "UPDATE users SET firstName = ?, lastName = ?, email = ?, password = ? WHERE id = ?";
+        jdbcTemplate.update(sql, user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(), id);
         return 0;
     }
+
 
     @Override
     public int delete(int id) {
@@ -44,7 +47,12 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public Optional<User> getUserByEmail(String email) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", new BeanPropertyRowMapper<User>(User.class), email));
+        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", new BeanPropertyRowMapper<User>(User.class), email);
+        if (users.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(users.get(0));
+        }
     }
 
 }
