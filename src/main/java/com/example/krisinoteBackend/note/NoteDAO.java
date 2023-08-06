@@ -1,21 +1,22 @@
 package com.example.krisinoteBackend.note;
 
-import com.example.krisinoteBackend.sync.NoteSyncData;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface NoteDAO {
-    int save(Note note, Number userId);
+    boolean save(Number userId, Note note);
 
-    int update(Note note);
+    String getNoteContent(String id);
 
-    int delete(String id);
+    boolean updateMetadata(Note note);
 
-    List<Note> getAll(Number userId);
+    int updateContent(String id, String newContent);
+
+    boolean delete(String id);
+
+//    List<Note> getAll(Number userId);
 
     Optional<Note> getNoteById(String id);
 
-    Map<String, NoteSyncData> getSyncData(Number userId);
 }

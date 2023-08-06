@@ -1,7 +1,6 @@
-package com.example.krisinoteBackend.note;
+package com.example.krisinoteBackend.webClip;
 
-import com.example.krisinoteBackend.Delta.Delta;
-import jakarta.annotation.Nullable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +12,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Note {
+public class WebClip {
     private String id;
-    private String noteName;
+    private String webClipName;
     private List<String> topics;
     private String description;
     private Number createdAt;
     private Number lastModified;
     private String content;
-
+    private String fromUrl;
 }

@@ -1,10 +1,13 @@
 package com.example.krisinoteBackend.note;
 
 import com.example.krisinoteBackend.Delta.Delta;
-import com.example.krisinoteBackend.sync.NoteSyncData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -12,28 +15,100 @@ import java.util.*;
 @Repository
 public class NoteDAOImpl implements NoteDAO {
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    // create the transaction template
+    private TransactionTemplate transactionTemplate;
 
     @Override
-    public int save(Note note, Number userId) {
-        return 0;
+    public boolean save(Number userId, Note note) {
+        return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                try {
+                    String sql1 = "INSERT INTO notes (id, noteName, description, createdAt, lastModified, content) VALUES (?, ?, ?, ?, ?, ?)";
+                    jdbcTemplate.update(sql1, note.getId(), note.getNoteName(), note.getDescription(), note.getCreatedAt(), note.getLastModified(), note.getContent());
+
+                    String sql2 = "INSERT INTO NoteTopic (noteId, topicId) VALUES (?, ?)";
+                    for (String topic : note.getTopics()) {
+                        jdbcTemplate.update(sql2, note.getId(), topic);
+                    }
+
+                    String sql3 = "INSERT INTO UserNote (userId, noteId) VALUES (?, ?)";
+                    jdbcTemplate.update(sql3, userId, note.getId());
+
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }));
+    }
+    @Override
+    public String getNoteContent(String id) {
+        String sql = "SELECT content FROM notes WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, id);
     }
 
     @Override
-    public int update(Note note) {
-        return 0;
+    public boolean updateMetadata(Note note) {
+        return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                try {
+                    String sql1 = "UPDATE notes SET noteName = ?, description = ?, createdAt = ?, lastModified = ? WHERE id = ?";
+                    jdbcTemplate.update(sql1, note.getNoteName(), note.getDescription(), note.getCreatedAt(), note.getLastModified(), note.getId());
+
+                    String sql2 = "DELETE FROM NoteTopic WHERE noteId = ?";
+                    jdbcTemplate.update(sql2, note.getId());
+
+                    String sql3 = "INSERT INTO NoteTopic (noteId, topicId) VALUES (?, ?)";
+                    for (String topic : note.getTopics()) {
+                        jdbcTemplate.update(sql3, note.getId(), topic);
+                    }
+
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }));
     }
 
     @Override
-    public int delete(String id) {
-        return 0;
+    public int updateContent(String id, String newContent) {
+        String sql = "UPDATE notes SET content = ? WHERE id = ?";
+        int rows = jdbcTemplate.update(sql, newContent, id);
+        return rows;
     }
+
 
     @Override
-    public List<Note> getAll(Number userId) {
-        return null;
+    public boolean delete(String id) {
+        return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                try {
+                    String sql1 = "DELETE FROM notes WHERE id = ?";
+                    jdbcTemplate.update(sql1, id);
+
+                    String sql2 = "DELETE FROM NoteTopic WHERE noteId = ?";
+                    jdbcTemplate.update(sql2, id);
+
+                    String sql3 = "DELETE FROM UserNote WHERE noteId = ?";
+                    jdbcTemplate.update(sql3, id);
+
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }));
     }
 
+    // don't really need that
     @Override
     public Optional<Note> getNoteById(String noteId) {
         String sqlForNote = "SELECT * FROM notes WHERE id = ?";
@@ -65,12 +140,8 @@ public class NoteDAOImpl implements NoteDAO {
                     .noteName((String) note.get("noteName"))
                     .description((String) note.get("description"))
                     .createdAt((Number) note.get("createdAt"))
-                    // need to chenge shite here
-                    .metaLastModified((Number) note.get("lastModified"))
-                    .contentLastModified((Number) note.get("lastModified"))
+                    .lastModified((Number) note.get("lastModified"))
                     .topics(topicIds)
-                    .fromUrl((String) note.get("fromUrl"))
-                    .type(NoteType.valueOf((String) note.get("type")))
                     .content((String) note.get("content"))
                     .build();
 
@@ -79,22 +150,4 @@ public class NoteDAOImpl implements NoteDAO {
         return Optional.empty();
     }
 
-    @Override
-    public Map<String, NoteSyncData> getSyncData(Number userId) {
-//        String sql = "SELECT n.id, n.metaLastModified, n.contentLastModified FROM notes n JOIN UserNote un ON n.id = un.noteId WHERE un.userId = ?";
-//        ArrayList<NoteSyncData> notes = (ArrayList<NoteSyncData>) jdbcTemplate.query(sql, new Object[]{userId}, noteSyncDataRowMapper);
-
-        String sql = "SELECT n.id, n.metaLastModified, n.contentLastModified FROM notes n JOIN UserNote un ON n.id = un.noteId WHERE un.userId = ?";
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, new Object[]{userId});
-        Map<String, NoteSyncData> notes = new HashMap<>();
-        for (Map<String, Object> row : rows) {
-            NoteSyncData note = new NoteSyncData();
-            note.setId((String) row.get("id"));
-            note.setMetaLastModified((Number) row.get("metaLastModified"));
-            note.setContentLastModified((Number) row.get("contentLastModified"));
-            notes.put(note.getId(), note);
-        }
-
-        return notes;
-    }
 }
