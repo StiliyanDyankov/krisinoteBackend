@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -24,6 +25,7 @@ public class WebClipDAOImpl implements WebClipDAO {
     // create the transaction template
     @Autowired
     private TransactionTemplate transactionTemplate;
+    @Transactional
     @Override
     public boolean save(Number userId, WebClip webClip) {
         return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -49,7 +51,7 @@ public class WebClipDAOImpl implements WebClipDAO {
             }
         }));
     }
-
+    @Transactional
     @Override
     public boolean updateMetadata(WebClip webClip) {
         return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -74,7 +76,7 @@ public class WebClipDAOImpl implements WebClipDAO {
             }
         }));
     }
-
+    @Transactional
     @Override
     public boolean delete(String id) {
         return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {

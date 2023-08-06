@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -24,6 +25,7 @@ public class NoteDAOImpl implements NoteDAO {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Transactional
     @Override
     public boolean save(Number userId, Note note) {
         return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -56,6 +58,7 @@ public class NoteDAOImpl implements NoteDAO {
         return jdbcTemplate.queryForList(sql, String.class, id).get(0);
     }
 
+    @Transactional
     @Override
     public boolean updateMetadata(Note note) {
         return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -88,7 +91,7 @@ public class NoteDAOImpl implements NoteDAO {
         return rows>0;
     }
 
-
+    @Transactional
     @Override
     public boolean delete(String id) {
         return Boolean.TRUE.equals(transactionTemplate.execute(new TransactionCallback<Boolean>() {

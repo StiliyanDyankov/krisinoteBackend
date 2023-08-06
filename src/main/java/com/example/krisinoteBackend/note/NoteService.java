@@ -1,5 +1,6 @@
 package com.example.krisinoteBackend.note;
 
+import com.example.krisinoteBackend.Delta.DeltaService;
 import com.example.krisinoteBackend.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,14 @@ public class NoteService {
     @Autowired
     private NoteDAOImpl noteRepository;
 
+    @Autowired
+    private DeltaService deltaService;
+
     public ResponseEntity createNote(Note note) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User user = (User) authentication.getPrincipal();
         Number userId = user.getUserId();
-
-        System.out.println(user);
-        System.out.println(userId);
 
         Map<String, String> body = new HashMap<String, String>();
         boolean success = noteRepository.save(userId, note);
@@ -40,10 +41,6 @@ public class NoteService {
     }
 
     public ResponseEntity updateNote(String id, Note note, String field) {
-        System.out.println(id);
-        System.out.println(note);
-        System.out.println(field);
-
         Map<String, String> body = new HashMap<String, String>();
 
         if (field.isEmpty()) return ResponseEntity.badRequest().build();
@@ -58,7 +55,13 @@ public class NoteService {
             }
 
         } else if (field.equals("content")) {
-            boolean success = noteRepository.updateContent(note.getId(), note.getContent());
+            System.out.println(note);
+            String prevContent = noteRepository.getNoteContent(note.getId());
+            System.out.println(prevContent);
+            String newContent = deltaService.getNewNoteContent(prevContent, note.getDelta());
+            System.out.println(newContent);
+
+            boolean success = noteRepository.updateContent(note.getId(), newContent);
             if(success){
                 body.put("message", "Successful");
                 return ResponseEntity.ok(body);

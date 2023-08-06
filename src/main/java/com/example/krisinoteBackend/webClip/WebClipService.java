@@ -19,6 +19,9 @@ public class WebClipService {
     @Autowired
     private WebClipDAO webClipRepository;
 
+    @Autowired
+    private WebClipperContextService contextService;
+
     public ResponseEntity createWebClip(WebClip webClip) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -29,6 +32,7 @@ public class WebClipService {
         boolean success = webClipRepository.save(userId, webClip);
 
         if(success){
+            contextService.publishWebClipContent(webClip.getId());
             body.put("message", "Successful");
             return ResponseEntity.ok(body);
         } else {
@@ -80,5 +84,15 @@ public class WebClipService {
 
 
         return ResponseEntity.status(200).body(missingWebClips);
+    }
+
+    // for long polling
+    public ResponseEntity getNewWebClips() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User user = (User) authentication.getPrincipal();
+        Number userId = user.getUserId();
+
+        return ResponseEntity.ok().build();
     }
 }

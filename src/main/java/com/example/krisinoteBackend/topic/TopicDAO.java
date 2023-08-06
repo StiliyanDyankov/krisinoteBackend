@@ -5,15 +5,15 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface TopicDAO {
-    int save(Topic topic, Number userId);
+    boolean save(Topic topic);
 
-    int update(Topic topic);
+    boolean update(Topic topic);
 
-    int delete(String id);
+    boolean delete(String id);
 
-    List<Topic> getAll(Number userId);
+//    List<Topic> getAll(Number userId);
 
-    Optional<Topic> getTopicById(String id);
+//    Optional<Topic> getTopicById(String id);
 
 //    Map<String, TopicSyncData> getSyncData(Number userId);
 }

@@ -16,6 +16,6 @@ public class Topic {
     private String topicName;
     private String description;
     private Number createdAt;
-    private Number metaLastModified;
+    private Number lastModified;
     private String color;
 }

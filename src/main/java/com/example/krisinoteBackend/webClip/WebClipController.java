@@ -24,7 +24,7 @@ public class WebClipController {
 
     // for clipper only ----------------------------
     @PostMapping
-    public ResponseEntity createWeb(@RequestBody WebClip webClip) {
+    public ResponseEntity createWebClip(@RequestBody WebClip webClip) {
         return webClipService.createWebClip(webClip);
     }
 
@@ -46,5 +46,11 @@ public class WebClipController {
     @PostMapping("/missing")
     public ResponseEntity getMissingWebClips(@RequestBody List<String> hasIds) {
         return webClipService.getMissingWebClips(hasIds);
+    }
+
+    // for long polling
+    @GetMapping("/new")
+    public ResponseEntity getNewWebClips() {
+        return webClipService.getNewWebClips();
     }
 }

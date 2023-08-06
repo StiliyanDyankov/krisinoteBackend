@@ -17,6 +17,7 @@ public class NoteController {
 
     @PostMapping
     public ResponseEntity createNote(@RequestBody Note note) {
+
         return noteService.createNote(note);
     }
 
