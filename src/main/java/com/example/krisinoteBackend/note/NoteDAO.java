@@ -11,11 +11,9 @@ public interface NoteDAO {
 
     boolean updateMetadata(Note note);
 
-    int updateContent(String id, String newContent);
+    boolean updateContent(String id, String newContent);
 
     boolean delete(String id);
-
-//    List<Note> getAll(Number userId);
 
     Optional<Note> getNoteById(String id);
 

@@ -1,7 +1,5 @@
 package com.example.krisinoteBackend.topic;
 
-import com.example.krisinoteBackend.sync.TopicSyncData;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,5 +15,5 @@ public interface TopicDAO {
 
     Optional<Topic> getTopicById(String id);
 
-    Map<String, TopicSyncData> getSyncData(Number userId);
+//    Map<String, TopicSyncData> getSyncData(Number userId);
 }

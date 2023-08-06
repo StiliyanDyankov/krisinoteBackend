@@ -9,6 +9,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -20,6 +21,7 @@ public class NoteDAOImpl implements NoteDAO {
     private PlatformTransactionManager transactionManager;
 
     // create the transaction template
+    @Autowired
     private TransactionTemplate transactionTemplate;
 
     @Override
@@ -39,8 +41,10 @@ public class NoteDAOImpl implements NoteDAO {
                     String sql3 = "INSERT INTO UserNote (userId, noteId) VALUES (?, ?)";
                     jdbcTemplate.update(sql3, userId, note.getId());
 
+
                     return true;
                 } catch (Exception e) {
+                    System.out.println(e);
                     return false;
                 }
             }
@@ -49,7 +53,7 @@ public class NoteDAOImpl implements NoteDAO {
     @Override
     public String getNoteContent(String id) {
         String sql = "SELECT content FROM notes WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, String.class, id);
+        return jdbcTemplate.queryForList(sql, String.class, id).get(0);
     }
 
     @Override
@@ -78,10 +82,10 @@ public class NoteDAOImpl implements NoteDAO {
     }
 
     @Override
-    public int updateContent(String id, String newContent) {
+    public boolean updateContent(String id, String newContent) {
         String sql = "UPDATE notes SET content = ? WHERE id = ?";
         int rows = jdbcTemplate.update(sql, newContent, id);
-        return rows;
+        return rows>0;
     }
 
 
@@ -113,7 +117,13 @@ public class NoteDAOImpl implements NoteDAO {
     public Optional<Note> getNoteById(String noteId) {
         String sqlForNote = "SELECT * FROM notes WHERE id = ?";
 
-        Map<String, Object> note = jdbcTemplate.queryForMap(sqlForNote, noteId);
+        Map<String, Object> note = new HashMap<>();
+        try {
+             note = jdbcTemplate.queryForMap(sqlForNote, noteId);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+
 
 
         if(note.isEmpty()) {

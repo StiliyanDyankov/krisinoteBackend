@@ -1,6 +1,5 @@
 package com.example.krisinoteBackend.topic;
 
-import com.example.krisinoteBackend.sync.TopicSyncData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -38,18 +37,18 @@ public class TopicDAOImpl implements  TopicDAO {
         return Optional.empty();
     }
 
-    @Override
-    public Map<String, TopicSyncData> getSyncData(Number userId) {
-        String sql = "SELECT t.id, t.metaLastModified FROM topics t JOIN NoteTopic nt ON t.id = nt.topicId JOIN UserNote un ON nt.noteId = un.noteId WHERE un.userId = ?";
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, new Object[]{userId});
-        Map<String, TopicSyncData> topics = new HashMap<>();
-        for (Map<String, Object> row : rows) {
-            TopicSyncData topic = new TopicSyncData();
-            topic.setId((String) row.get("id"));
-            topic.setMetaLastModified((Number) row.get("metaLastModified"));
-            topics.put(topic.getId(), topic);
-        }
-
-        return topics;
-    }
+//    @Override
+//    public Map<String, TopicSyncData> getSyncData(Number userId) {
+//        String sql = "SELECT t.id, t.metaLastModified FROM topics t JOIN NoteTopic nt ON t.id = nt.topicId JOIN UserNote un ON nt.noteId = un.noteId WHERE un.userId = ?";
+//        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, new Object[]{userId});
+//        Map<String, TopicSyncData> topics = new HashMap<>();
+//        for (Map<String, Object> row : rows) {
+//            TopicSyncData topic = new TopicSyncData();
+//            topic.setId((String) row.get("id"));
+//            topic.setMetaLastModified((Number) row.get("metaLastModified"));
+//            topics.put(topic.getId(), topic);
+//        }
+//
+//        return topics;
+//    }
 }

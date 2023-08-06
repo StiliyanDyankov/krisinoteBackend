@@ -21,5 +21,4 @@ public class Note {
     private Number createdAt;
     private Number lastModified;
     private String content;
-
 }
