@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    private final RequestMatcher applyToPaths = new AntPathRequestMatcher("/api/v1/app");
+    private final RequestMatcher applyToPaths = new AntPathRequestMatcher("/api/v1/app/**");
     // test change
     @Override
     protected void doFilterInternal(
@@ -47,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
 
             userEmail = jwtService.extractUsername(jwt);
+
 
             if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

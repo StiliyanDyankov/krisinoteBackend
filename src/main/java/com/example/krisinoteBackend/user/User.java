@@ -16,12 +16,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
+
     private Integer id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private Role role;
+
+    public Number getUserId() {
+        return id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -60,12 +60,13 @@ public class JwtService {
         // commonly used/ standard claims - they're convenience methods
 //        userDetails.getPassword()
         // here we're yet again utilizing the builder pattern
+        extractClaims.put("Role", userDetails.getAuthorities());
         return Jwts
                 .builder()
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 // up till here things are fairly standard - we just set some claims
                 // here we get the encription key and specify the algorithm
                 // to be used when generating the jwt token

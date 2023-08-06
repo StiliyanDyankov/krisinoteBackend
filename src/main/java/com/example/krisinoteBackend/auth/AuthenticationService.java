@@ -2,6 +2,7 @@ package com.example.krisinoteBackend.auth;
 
 import com.example.krisinoteBackend.config.JwtService;
 import com.example.krisinoteBackend.mail.MailingService;
+import com.example.krisinoteBackend.note.NoteDAOImpl;
 import com.example.krisinoteBackend.user.Role;
 import com.example.krisinoteBackend.user.User;
 import com.example.krisinoteBackend.user.UserDAOImpl;
@@ -29,6 +30,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final MailingService mailingService;
+    private final NoteDAOImpl repo;
 
     // a service func which returns body of req
     // takes in the whole req as arg
@@ -36,6 +38,7 @@ public class AuthenticationService {
     public ResponseEntity<AuthenticationResponse> registerAndSendCode(RegisterRequest request) { // OK!
         // creates a new user, implementing the builder pattern
         // here we set all the fields of the user
+        repo.getNoteById("1");
 
         System.out.println("first request");
         System.out.println(request);
@@ -45,7 +48,7 @@ public class AuthenticationService {
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(Role.UNVERIFIED)
                 .build();
 
         System.out.println("first user");
@@ -206,22 +209,22 @@ public class AuthenticationService {
 
         } catch(Exception e) {
             return ResponseEntity.status(403).body(
-                    AuthenticationResponse.builder()
-                            .error(
-                                    ResponseErrorData.builder().errors(
-                                                    PasswordErrors.builder()
-                                                            .noLength(false)
-                                                            .noLowercase(false)
-                                                            .noNumber(false)
-                                                            .noPasswordServer(true)
-                                                            .noSymbol(false)
-                                                            .noUppercase(false)
-                                                            .build()
-                                            )
-                                            .type(ErrorTypes.PASSWORD_ERROR)
-                                            .build()
-                            )
+            AuthenticationResponse.builder()
+                .error(
+                    ResponseErrorData.builder().errors(
+                        PasswordErrors.builder()
+                            .noLength(false)
+                            .noLowercase(false)
+                            .noNumber(false)
+                            .noPasswordServer(true)
+                            .noSymbol(false)
+                            .noUppercase(false)
                             .build()
+                    )
+                    .type(ErrorTypes.PASSWORD_ERROR)
+                    .build()
+                )
+                .build()
             );
         }
 
@@ -250,7 +253,7 @@ public class AuthenticationService {
 
         var user = User.builder()
                 .email(allClaims.getSubject())
-                .role(Role.USER)
+                .role(Role.UNVERIFIED)
                 .build();
 
         HashMap<String, Object> claims = new HashMap<>();
@@ -358,7 +361,7 @@ public class AuthenticationService {
 
         var user = User.builder()
                 .email(allClaims.getSubject())
-                .role(Role.USER)
+                .role(Role.UNVERIFIED)
                 .build();
 
         var jwtToken = jwtService.generateToken(user);
