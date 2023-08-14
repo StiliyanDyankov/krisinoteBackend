@@ -65,8 +65,8 @@ public class NoteDAOImpl implements NoteDAO {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 try {
-                    String sql1 = "UPDATE notes SET noteName = ?, description = ?, createdAt = ?, lastModified = ? WHERE id = ?";
-                    jdbcTemplate.update(sql1, note.getNoteName(), note.getDescription(), note.getCreatedAt(), note.getLastModified(), note.getId());
+                    String sql1 = "UPDATE notes SET noteName = ?, description = ?, lastModified = ? WHERE id = ?";
+                    jdbcTemplate.update(sql1, note.getNoteName(), note.getDescription(), note.getLastModified(), note.getId());
 
                     String sql2 = "DELETE FROM NoteTopic WHERE noteId = ?";
                     jdbcTemplate.update(sql2, note.getId());

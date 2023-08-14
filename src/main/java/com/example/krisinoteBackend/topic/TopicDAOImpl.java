@@ -35,16 +35,15 @@ public class TopicDAOImpl implements  TopicDAO {
     @Override
     public boolean update(Topic topic) {
         // Create a SQL query to update an existing topic in the topics table
-        String sql = "UPDATE topics SET topicName = ?, description = ?, createdAt = ?, lastModified = ?, color = ? WHERE id = ?";
+        String sql = "UPDATE topics SET topicName = ?, description = ?, lastModified = ?, color = ? WHERE id = ?";
 
 // Create an array of parameters for the query
-        Object[] params = new Object[6];
+        Object[] params = new Object[5];
         params[0] = topic.getTopicName();
         params[1] = topic.getDescription();
-        params[2] = topic.getCreatedAt();
-        params[3] = topic.getLastModified();
-        params[4] = topic.getColor();
-        params[5] = topic.getId();
+        params[2] = topic.getLastModified();
+        params[3] = topic.getColor();
+        params[4] = topic.getId();
 
 // Execute the query and return the number of rows affected
         int rows = jdbcTemplate.update(sql, params);
